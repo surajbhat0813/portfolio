@@ -12,23 +12,14 @@ interface ExperienceItem {
 
 const experiences: ExperienceItem[] = [
   {
-    title: "Software Engineer",
-    company: "Company Name",
-    period: "2023 - Present",
+    title: "Frontend Developer",
+    company: "Software Development",
+    period: "2022 - Present",
     description: [
-      "Developed and maintained web applications using modern frameworks",
-      "Collaborated with cross-functional teams to deliver high-quality products",
-      "Implemented best practices for code quality and performance optimization",
-    ],
-  },
-  {
-    title: "Junior Developer",
-    company: "Previous Company",
-    period: "2021 - 2023",
-    description: [
-      "Built responsive user interfaces with React and TypeScript",
-      "Participated in agile development processes",
-      "Contributed to open-source projects",
+      "Developed and maintained responsive web applications using React.js and Next.js",
+      "Built reusable UI components with Tailwind CSS and modern CSS techniques",
+      "Implemented state management solutions using Redux Toolkit",
+      "Collaborated with cross-functional teams to deliver high-quality user experiences",
     ],
   },
 ];
