@@ -26,17 +26,17 @@ export default function About() {
         <div className="space-y-8 max-w-3xl mt-16">
           <ScrollReveal delay={0.4}>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 leading-relaxed">
-              I'm a passionate developer who loves creating beautiful and functional
-              digital experiences. With a focus on clean code and user-centered design,
-              I bring ideas to life through technology.
+              I'm a frontend developer with 2.5 years of experience building modern web
+              applications. I specialize in creating responsive, performant user interfaces
+              using React, Next.js, and Tailwind CSS.
             </p>
           </ScrollReveal>
 
           <ScrollReveal delay={0.6}>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-400 leading-relaxed">
-              My journey in software development has been driven by curiosity and a
-              constant desire to learn and grow. I enjoy working on challenging projects
-              that push the boundaries of what's possible.
+              I'm passionate about writing clean, maintainable code and creating seamless
+              user experiences. I enjoy working with modern frontend technologies and
+              staying up-to-date with the latest web development trends.
             </p>
           </ScrollReveal>
 
