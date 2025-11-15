@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio Website
+
+A modern, dark, and minimalistic portfolio website built with Next.js, featuring smooth scroll animations and an Apple-inspired design.
+
+## Features
+
+- **Dark & Minimalistic Design**: Clean black background with white text and minimal colors
+- **Smooth Scroll Animations**: Apple-style scroll effects with Framer Motion
+- **Responsive Design**: Fully responsive across all device sizes
+- **Section-Based Layout**: 
+  - About (Hero section)
+  - Experience (Timeline)
+  - Projects (Card grid)
+  - Skills (Categorized)
+  - Contact (Form)
+- **Interactive Navigation**: Sticky navbar with active section highlighting
+- **Scroll Progress Indicator**: Visual scroll progress on desktop
+
+## Tech Stack
+
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Utility-first styling
+- **Framer Motion** - Animation library
+- **Lucide React** - Icon library
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run the development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Customization
 
-## Learn More
+### Update Personal Information
 
-To learn more about Next.js, take a look at the following resources:
+1. **About Section** (`components/sections/About.tsx`):
+   - Update the hero text with your name
+   - Modify the description paragraphs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Experience Section** (`components/sections/Experience.tsx`):
+   - Update the `experiences` array with your work history
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Projects Section** (`components/sections/Projects.tsx`):
+   - Update the `projects` array with your projects
+   - Add GitHub and live URLs
 
-## Deploy on Vercel
+4. **Skills Section** (`components/sections/Skills.tsx`):
+   - Update the `skillCategories` array with your skills
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. **Contact Section** (`components/sections/Contact.tsx`):
+   - Update the email address
+   - Configure form submission (currently uses a placeholder)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+6. **Metadata** (`app/layout.tsx`):
+   - Update the title and description in the metadata object
+
+## Deployment
+
+### Deploy to Vercel
+
+1. Push your code to GitHub
+2. Import your repository in [Vercel](https://vercel.com)
+3. Vercel will automatically detect Next.js and deploy
+
+The site will be live at `your-project.vercel.app`
+
+## Project Structure
+
+```
+portfolio/
+├── app/
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx            # Home page
+│   └── globals.css          # Global styles
+├── components/
+│   ├── sections/           # Section components
+│   ├── ui/                 # UI components (Navbar, etc.)
+│   └── animations/         # Animation components
+└── lib/
+    └── utils.ts            # Utility functions
+```
+
+## License
+
+MIT
