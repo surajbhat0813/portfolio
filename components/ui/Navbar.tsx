@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { projects } from "@/components/sections/Projects";
 
 const navItems = [
   { name: "About", href: "#about" },
@@ -30,9 +31,34 @@ export default function Navbar() {
       // Add a threshold (0.3) so section changes when 30% scrolled
       const sectionIndex = Math.floor((scrollY + viewportHeight * 0.3) / viewportHeight);
       
-      // Clamp the index to valid range
-      const clampedIndex = Math.max(0, Math.min(sectionIndex, navItems.length - 1));
-      const activeSectionId = navItems[clampedIndex]?.href.substring(1) || "";
+      // Section mapping:
+      // 0: About
+      // 1: Experience
+      // 2: Projects Header
+      // 3 to (2 + numProjects): Individual Projects
+      // Next: Skills
+      // Last: Contact
+      
+      // Projects start at index 2 (Projects Header), then individual projects follow
+      // Projects header (1 section) + individual projects (projects.length sections)
+      const projectsStartIndex = 2;
+      const projectsEndIndex = projectsStartIndex + projects.length; // Header + all projects
+      const skillsIndex = projectsEndIndex + 1;
+      
+      let activeSectionId = "";
+      
+      if (sectionIndex === 0) {
+        activeSectionId = "about";
+      } else if (sectionIndex === 1) {
+        activeSectionId = "experience";
+      } else if (sectionIndex >= projectsStartIndex && sectionIndex <= projectsEndIndex) {
+        // Projects header + all individual projects
+        activeSectionId = "projects";
+      } else if (sectionIndex === skillsIndex) {
+        activeSectionId = "skills";
+      } else if (sectionIndex > skillsIndex) {
+        activeSectionId = "contact";
+      }
       
       setActiveSection(activeSectionId);
     };
@@ -83,23 +109,23 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-6  right-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-black/80 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 ">
+        <div className="flex items-center justify-between h-20 b">
           <motion.a
             href="#about"
             onClick={(e) => {
               e.preventDefault();
               handleNavClick("#about");
             }}
-            className="text-xl font-bold tracking-wider uppercase"
+            className="text-xl font-bold tracking-wider   "
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Portfolio
+            {`<dev>`}
           </motion.a>
 
           {/* Desktop Navigation */}

@@ -10,6 +10,7 @@ import Contact from "@/components/sections/Contact";
 import Navbar from "@/components/ui/Navbar";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import ScrollSection from "@/components/ui/ScrollSection";
+import BackgroundPattern from "@/components/ui/BackgroundPattern";
 
 // Calculate total sections: About, Experience, Projects Header, each Project, Skills, Contact
 const baseSections = [
@@ -36,6 +37,7 @@ export default function Home() {
 
   return (
     <main ref={containerRef} className="relative">
+      <BackgroundPattern />
       <Navbar />
       <ScrollIndicator />
       
