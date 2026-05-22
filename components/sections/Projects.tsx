@@ -1,9 +1,8 @@
 "use client";
 
 import ScrollReveal from "../animations/ScrollReveal";
-import ProjectItem from "./ProjectItem";
 
-interface Project {
+export interface Project {
   title: string;
   description: string;
   technologies: string[];
@@ -12,29 +11,42 @@ interface Project {
   imageUrl?: string;
 }
 
-export const projects: Project[] = [
+export const featuredProjects: Project[] = [
   {
-    title: "Project One",
+    title: "ApniKheti E-Commerce",
     description:
-      "A modern web application built with Next.js and TypeScript, featuring real-time updates and a beautiful user interface.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
-    githubUrl: "https://github.com",
-    liveUrl: "https://example.com",
+      "Full e-commerce platform for agricultural products serving farmers across India. Built complete frontend including product listings, cart management, checkout flow, category filters, and responsive design across all devices.",
+    technologies: ["Next.js", "React.js", "Tailwind CSS", "REST APIs"],
+    liveUrl: "https://shop.apnikheti.com",
+    imageUrl: "/projects/apnikheti.jpg",
   },
   {
-    title: "Project Two",
+    title: "Argyle Analytics Dashboard",
     description:
-      "An innovative mobile-first design system that provides seamless user experiences across all devices.",
-    technologies: ["React", "Framer Motion", "CSS"],
-    githubUrl: "https://github.com",
-    liveUrl: "https://example.com",
+      "Power BI-like data visualization dashboard for insurance analytics. Built 15+ interactive charts including donut charts, bar charts, line graphs, and geographic maps enabling faster business insights for the analytics team.",
+    technologies: ["React.js", "Next.js", "amCharts", "Redux Toolkit", "Tailwind CSS"],
+    imageUrl: "/projects/argyle.jpg",
   },
   {
-    title: "Project Three",
+    title: "XPT LandonVision",
     description:
-      "A full-stack application with authentication, database integration, and API endpoints for data management.",
-    technologies: ["Node.js", "PostgreSQL", "Express"],
-    githubUrl: "https://github.com",
+      "Enterprise document automation platform processing 24,000+ insurance submissions. Built PDF extraction workflows, intelligent insured matching, and multi-step review pipelines — improving team productivity by 30%.",
+    technologies: ["React.js", "Next.js", "Tailwind CSS", "Redux Toolkit"],
+    imageUrl: "/projects/xpt.jpg",
+  },
+  {
+    title: "Honey Trading Platform",
+    description:
+      "Frontend for a perpetual contracts crypto trading platform with automated strategies. Built live candlestick charts, position management tables, and strategy configuration interfaces for algorithmic trading.",
+    technologies: ["React.js", "Next.js", "Tailwind CSS"],
+    imageUrl: "/projects/honey.jpg",
+  },
+  {
+    title: "TotalExpert Integration",
+    description:
+      "Data integration dashboard for syncing AE and TE objects via event-driven jobs. Built job monitoring with stats cards, version history tracking, and request/response inspection panels.",
+    technologies: ["React.js", "Next.js", "Tailwind CSS", "REST APIs"],
+    imageUrl: "/projects/totalexpert.jpg",
   },
 ];
 
@@ -46,13 +58,20 @@ export default function Projects() {
     >
       <div className="max-w-6xl mx-auto w-full text-center">
         <ScrollReveal delay={0.2}>
-          <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-16 tracking-tight">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="h-px w-16" style={{ backgroundColor: "rgba(0,245,255,0.3)" }} />
+            <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--accent)" }}>
+              Selected Work
+            </span>
+            <div className="h-px w-16" style={{ backgroundColor: "rgba(0,245,255,0.3)" }} />
+          </div>
+          <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-10 tracking-tight">
             Projects
           </h2>
         </ScrollReveal>
         <ScrollReveal delay={0.4}>
-          <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto">
-            A collection of projects I've built using modern web technologies
+          <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto">
+            Production-ready applications across e-commerce, analytics, enterprise automation, and fintech
           </p>
         </ScrollReveal>
       </div>

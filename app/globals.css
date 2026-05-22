@@ -4,12 +4,17 @@
   --background: #000000;
   --foreground: #ffffff;
   --foreground-muted: #a0a0a0;
-  --accent: #ffffff;
+  --accent: #00f5ff;
+  --accent-dim: rgba(0, 245, 255, 0.08);
+  --accent-mid: rgba(0, 245, 255, 0.25);
+  --accent-glow: 0 0 15px rgba(0, 245, 255, 0.6), 0 0 40px rgba(0, 245, 255, 0.2);
+  --accent-glow-sm: 0 0 8px rgba(0, 245, 255, 0.5);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: #00f5ff;
   --font-heading: var(--font-orbitron);
   --font-body: var(--font-space-grotesk);
 }
@@ -32,7 +37,22 @@ body {
   overflow-y: auto;
 }
 
-/* Futuristic font classes */
+/* Scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-orbitron), sans-serif;
   font-weight: 700;
@@ -45,44 +65,144 @@ button, .font-heading, nav {
   letter-spacing: 0.05em;
 }
 
-/* Enhanced futuristic styling */
-.font-futuristic {
-  font-family: var(--font-orbitron), sans-serif;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-weight: 700;
+/* ─── Glitch text effect ──────────────────────────── */
+.glitch-text {
+  position: relative;
+  display: inline-block;
 }
 
-/* Smooth scroll snap */
-.scroll-container {
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
-  height: 100vh;
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  font-family: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  line-height: inherit;
 }
 
-.scroll-section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+.glitch-text::before {
+  color: var(--accent);
+  left: -2px;
+  animation: glitch-clip-1 7s infinite;
 }
 
-/* Smooth scrolling enhancement */
+.glitch-text::after {
+  color: rgba(255, 40, 100, 0.85);
+  left: 2px;
+  animation: glitch-clip-2 7s infinite;
+}
+
+@keyframes glitch-clip-1 {
+  0%, 83%, 100% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+  84% {
+    clip-path: inset(5% 0 88% 0);
+    transform: translate(-3px);
+    opacity: 1;
+  }
+  86% {
+    clip-path: inset(45% 0 42% 0);
+    transform: translate(3px);
+    opacity: 1;
+  }
+  88% {
+    clip-path: inset(78% 0 8% 0);
+    transform: translate(-2px);
+    opacity: 1;
+  }
+  90% {
+    clip-path: inset(25% 0 65% 0);
+    transform: translate(2px);
+    opacity: 1;
+  }
+  92% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-clip-2 {
+  0%, 87%, 100% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+  88% {
+    clip-path: inset(62% 0 28% 0);
+    transform: translate(3px);
+    opacity: 1;
+  }
+  90% {
+    clip-path: inset(15% 0 75% 0);
+    transform: translate(-3px);
+    opacity: 1;
+  }
+  92% {
+    clip-path: inset(38% 0 52% 0);
+    transform: translate(2px);
+    opacity: 1;
+  }
+  94% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+}
+
+/* ─── Neon utilities ─────────────────────────────── */
+.neon-text {
+  color: var(--accent);
+  text-shadow: var(--accent-glow);
+}
+
+.neon-border {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.25), inset 0 0 12px rgba(0, 245, 255, 0.04);
+}
+
+.neon-dot {
+  background: var(--accent);
+  box-shadow: var(--accent-glow-sm);
+}
+
+/* Pulsing glow for timeline dots etc */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 245, 255, 0.8), 0 0 20px rgba(0, 245, 255, 0.3); }
+  50%       { box-shadow: 0 0 12px rgba(0, 245, 255, 1), 0 0 40px rgba(0, 245, 255, 0.5); }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ─── Custom cursor — hide default on pointer devices ─ */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+/* ─── Scroll / layout ────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
 
-/* Hide browser scrollbar but keep scrolling functionality */
-/* For Chrome, Safari, and Edge */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
 }
 
-/* For Firefox */
 * {
   scrollbar-width: none;
 }
 
-/* For IE and Edge (older versions) */
 body {
   -ms-overflow-style: none;
 }

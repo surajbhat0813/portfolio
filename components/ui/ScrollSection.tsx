@@ -10,11 +10,7 @@ interface ScrollSectionProps {
   totalSections: number;
 }
 
-export default function ScrollSection({
-  children,
-  index,
-  totalSections,
-}: ScrollSectionProps) {
+export default function ScrollSection({ children, index, totalSections }: ScrollSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isActive, setIsActive] = useState(index === 0);
   const [scrollDirection, setScrollDirection] = useState<"forward" | "backward">("forward");
@@ -26,8 +22,7 @@ export default function ScrollSection({
       const viewportHeight = window.innerHeight;
       const sectionStart = index * viewportHeight;
       const sectionEnd = (index + 1) * viewportHeight;
-      
-      // Determine scroll direction
+
       if (currentScrollY > prevScrollY.current) {
         setScrollDirection("forward");
       } else if (currentScrollY < prevScrollY.current) {
@@ -35,10 +30,7 @@ export default function ScrollSection({
       }
       prevScrollY.current = currentScrollY;
 
-      // Check if this section should be active (when scroll is near the section center)
-      const isInView = currentScrollY >= sectionStart && 
-                       currentScrollY < sectionEnd;
-      setIsActive(isInView);
+      setIsActive(currentScrollY >= sectionStart && currentScrollY < sectionEnd);
     };
 
     let ticking = false;
@@ -57,29 +49,33 @@ export default function ScrollSection({
     return () => window.removeEventListener("scroll", optimizedScroll);
   }, [index]);
 
-  // Animation variants
+  const offset = scrollDirection === "forward" ? 80 : -80;
+
   const variants = {
     hidden: {
       opacity: 0,
-      x: scrollDirection === "forward" ? 150 : -150,
-      scale: 0.9,
+      x: offset,
+      scale: 0.97,
+      filter: "blur(6px)",
     },
     visible: {
       opacity: 1,
       x: 0,
       scale: 1,
+      filter: "blur(0px)",
       transition: {
-        duration: 0.9,
-        ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+        duration: 0.75,
+        ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
       },
     },
     exit: {
       opacity: 0,
-      x: scrollDirection === "forward" ? -150 : 150,
-      scale: 0.9,
+      x: -offset,
+      scale: 0.97,
+      filter: "blur(6px)",
       transition: {
-        duration: 0.7,
-        ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
       },
     },
   };
@@ -88,18 +84,20 @@ export default function ScrollSection({
     <motion.section
       ref={sectionRef}
       className="min-h-screen w-full fixed top-0 left-0 flex items-center justify-center"
-      style={{ 
+      style={{
         zIndex: isActive ? 100 : totalSections - index,
-        pointerEvents: isActive ? "auto" : "none"
+        pointerEvents: isActive ? "auto" : "none",
       }}
       initial="hidden"
       animate={isActive ? "visible" : "exit"}
       variants={variants}
     >
-      <div className="w-full h-full relative z-50" style={{ pointerEvents: isActive ? "auto" : "none" }}>
+      <div
+        className="w-full h-full relative z-50"
+        style={{ pointerEvents: isActive ? "auto" : "none" }}
+      >
         {children}
       </div>
     </motion.section>
   );
 }
-

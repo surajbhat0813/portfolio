@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { projects } from "@/components/sections/Projects";
+import { featuredProjects } from "@/components/sections/Projects";
 
 const navItems = [
   { name: "About", href: "#about" },
@@ -12,6 +12,15 @@ const navItems = [
   { name: "Skills", href: "#skills" },
   { name: "Contact", href: "#contact" },
 ];
+
+// Must mirror the layout in page.tsx
+const N                    = featuredProjects.length;   // 5
+const CAROUSEL_START       = 3;
+const AFTER_START          = CAROUSEL_START + N;        // 8
+const PROJECTS_START       = 2;                         // Projects header
+const OTHER_PROJECTS_INDEX = AFTER_START;               // 8
+const SKILLS_INDEX         = AFTER_START + 1;           // 9
+const CONTACT_INDEX        = AFTER_START + 2;           // 10
 
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState("about");
@@ -22,51 +31,29 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      // Calculate active section based on scroll position
-      // Each section takes 100vh, so we can determine which section is active
       const viewportHeight = window.innerHeight;
       const scrollY = window.scrollY;
-      
-      // Use floor to get the current section index
-      // Add a threshold (0.3) so section changes when 30% scrolled
       const sectionIndex = Math.floor((scrollY + viewportHeight * 0.3) / viewportHeight);
-      
-      // Section mapping:
-      // 0: About
-      // 1: Experience
-      // 2: Projects Header
-      // 3 to (2 + numProjects): Individual Projects
-      // Next: Skills
-      // Last: Contact
-      
-      // Projects start at index 2 (Projects Header), then individual projects follow
-      // Projects header (1 section) + individual projects (projects.length sections)
-      const projectsStartIndex = 2;
-      const projectsEndIndex = projectsStartIndex + projects.length; // Header + all projects
-      const skillsIndex = projectsEndIndex + 1;
-      
+
       let activeSectionId = "";
-      
+
       if (sectionIndex === 0) {
         activeSectionId = "about";
       } else if (sectionIndex === 1) {
         activeSectionId = "experience";
-      } else if (sectionIndex >= projectsStartIndex && sectionIndex <= projectsEndIndex) {
-        // Projects header + all individual projects
+      } else if (sectionIndex >= PROJECTS_START && sectionIndex <= OTHER_PROJECTS_INDEX) {
         activeSectionId = "projects";
-      } else if (sectionIndex === skillsIndex) {
+      } else if (sectionIndex === SKILLS_INDEX) {
         activeSectionId = "skills";
-      } else if (sectionIndex > skillsIndex) {
+      } else if (sectionIndex >= CONTACT_INDEX) {
         activeSectionId = "contact";
       }
-      
+
       setActiveSection(activeSectionId);
     };
 
-    // Initial check
     handleScroll();
 
-    // Throttle scroll events for better performance
     let ticking = false;
     const optimizedScroll = () => {
       if (!ticking) {
@@ -80,7 +67,6 @@ export default function Navbar() {
 
     window.addEventListener("scroll", optimizedScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
-    
     return () => {
       window.removeEventListener("scroll", optimizedScroll);
       window.removeEventListener("resize", handleScroll);
@@ -88,19 +74,21 @@ export default function Navbar() {
   }, []);
 
   const handleNavClick = (href: string) => {
-    const sectionIndex = navItems.findIndex((item) => item.href === href);
-    
-    if (sectionIndex !== -1) {
-      // Scroll to the section based on its index
-      const viewportHeight = window.innerHeight;
-      const targetScroll = sectionIndex * viewportHeight;
-      
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
+    const viewportHeight = window.innerHeight;
+
+    const scrollMap: Record<string, number> = {
+      "#about": 0,
+      "#experience": 1 * viewportHeight,
+      "#projects": 2 * viewportHeight,
+      "#skills": SKILLS_INDEX * viewportHeight,
+      "#contact": CONTACT_INDEX * viewportHeight,
+    };
+
+    const target = scrollMap[href];
+    if (target !== undefined) {
+      window.scrollTo({ top: target, behavior: "smooth" });
     }
-    
+
     setIsMobileMenuOpen(false);
   };
 
@@ -109,19 +97,22 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-0 left-6  right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-black/80 backdrop-blur-md" : "bg-transparent"
+      className={`fixed top-0 left-6 right-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? "bg-black/85 backdrop-blur-md"
+          : "bg-transparent"
       }`}
+      style={isScrolled ? { borderBottom: "1px solid rgba(0,245,255,0.1)" } : {}}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 ">
-        <div className="flex items-center justify-between h-20 b">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-20">
           <motion.a
             href="#about"
             onClick={(e) => {
               e.preventDefault();
               handleNavClick("#about");
             }}
-            className="text-xl font-bold tracking-wider   "
+            className="text-xl font-bold tracking-wider"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -140,9 +131,14 @@ export default function Navbar() {
                 }}
                 className={`relative text-base font-semibold tracking-wider uppercase transition-colors ${
                   activeSection === item.href.substring(1)
-                    ? "text-white"
+                    ? ""
                     : "text-gray-400 hover:text-white"
                 }`}
+                style={
+                  activeSection === item.href.substring(1)
+                    ? { color: "var(--accent)", textShadow: "0 0 10px rgba(0,245,255,0.5)" }
+                    : {}
+                }
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -150,14 +146,13 @@ export default function Navbar() {
                 {activeSection === item.href.substring(1) && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-white"
-                    initial={false}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 380, 
-                      damping: 30,
-                      mass: 0.5
+                    className="absolute -bottom-1 left-0 right-0 h-0.5"
+                    style={{
+                      background: "var(--accent)",
+                      boxShadow: "0 0 8px rgba(0,245,255,0.8), 0 0 20px rgba(0,245,255,0.4)",
                     }}
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.5 }}
                   />
                 )}
               </motion.a>
@@ -207,4 +202,3 @@ export default function Navbar() {
     </motion.nav>
   );
 }
-
