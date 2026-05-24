@@ -9,6 +9,8 @@ export interface Project {
   githubUrl?: string;
   liveUrl?: string;
   imageUrl?: string;
+  images?: string[];
+  imageLabels?: string[];
 }
 
 export const featuredProjects: Project[] = [
@@ -18,14 +20,26 @@ export const featuredProjects: Project[] = [
       "Full e-commerce platform for agricultural products serving farmers across India. Built complete frontend including product listings, cart management, checkout flow, category filters, and responsive design across all devices.",
     technologies: ["Next.js", "React.js", "Tailwind CSS", "REST APIs"],
     liveUrl: "https://shop.apnikheti.com",
-    imageUrl: "/projects/apnikheti.jpg",
+    images: [
+      "/images/apnikheti-home.png",
+      "/images/apnikheti-products.png",
+      "/images/apnikheti-categories.png",
+      "/images/apnikheti-detail.png",
+    ],
+    imageLabels: ["Home", "Products", "Categories", "Detail"],
   },
   {
     title: "Argyle Analytics Dashboard",
     description:
       "Power BI-like data visualization dashboard for insurance analytics. Built 15+ interactive charts including donut charts, bar charts, line graphs, and geographic maps enabling faster business insights for the analytics team.",
     technologies: ["React.js", "Next.js", "amCharts", "Redux Toolkit", "Tailwind CSS"],
-    imageUrl: "/projects/argyle.jpg",
+    images: [
+      "/images/argyle-summary.png",
+      "/images/argyle-insurance.png",
+      "/images/argyle-occupation.png",
+      "/images/argyle-charts.png",
+    ],
+    imageLabels: ["Summary", "Insurance", "Occupation", "Charts"],
   },
   {
     title: "XPT LandonVision",
@@ -46,7 +60,13 @@ export const featuredProjects: Project[] = [
     description:
       "Data integration dashboard for syncing AE and TE objects via event-driven jobs. Built job monitoring with stats cards, version history tracking, and request/response inspection panels.",
     technologies: ["React.js", "Next.js", "Tailwind CSS", "REST APIs"],
-    imageUrl: "/projects/totalexpert.jpg",
+    images: [
+      "/images/totalexpert-home.png",
+      "/images/totalexpert-ae-objects.png",
+      "/images/totalexpert-detail.png",
+      "/images/totalexpert-login.png",
+    ],
+    imageLabels: ["Dashboard", "AE Objects", "Detail View", "Login"],
   },
 ];
 

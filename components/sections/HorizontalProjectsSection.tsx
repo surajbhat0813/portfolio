@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { createPortal } from "react-dom";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
 import { featuredProjects } from "./Projects";
 import type { Project } from "./Projects";
@@ -151,6 +152,260 @@ export default function HorizontalProjectsSection({
 }
 
 // ─────────────────────────────────────────────────────
+// Deck-of-cards layout for multi-screenshot projects
+// ─────────────────────────────────────────────────────
+const FAN = [
+  { rotate: -20, x: -6, y:  6, zIndex: 0, delay: 0.06 },
+  { rotate:  -7, x: -2, y:  0, zIndex: 1, delay: 0.03 },
+  { rotate:   7, x:  2, y:  0, zIndex: 2, delay: 0.0  },
+  { rotate:  20, x:  6, y:  6, zIndex: 3, delay: 0.09 },
+];
+
+function ImageDeck({ images, title, isActive, labels }: { images: string[]; title: string; isActive: boolean; labels?: string[] }) {
+  const getLabel = (i: number) => labels?.[i] ?? `Screen ${i + 1}`;
+  const [hovered,  setHovered]  = useState<number | null>(null);
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const [mounted,  setMounted]  = useState(false);
+  const [fanned,   setFanned]   = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  // Staggered fan-out when slide becomes active
+  useEffect(() => {
+    if (isActive) {
+      const t = setTimeout(() => setFanned(true), 80);
+      return () => clearTimeout(t);
+    } else {
+      setFanned(false);
+      setHovered(null);
+    }
+  }, [isActive]);
+
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setExpanded(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <>
+      {/* ── Fan deck ─────────────────────────────────────── */}
+      <div className="relative w-full h-full flex items-center justify-center">
+        {images.map((img, i) => {
+          const fan   = FAN[i];
+          const isHov = hovered === i;
+
+          return (
+            <motion.div
+              key={i}
+              className="absolute cursor-pointer"
+              style={{
+                width:    "76%",
+                aspectRatio: "16/10",
+                bottom:   "10%",
+                left:     "12%",
+                originX:  0.5,
+                originY:  1.2,
+                zIndex:   fan.zIndex,
+                borderRadius: "10px",
+                overflow: "hidden",
+              }}
+              initial={{ rotate: 0, x: 0, y: 40, opacity: 0, scale: 0.88 }}
+              animate={fanned ? {
+                rotate:    fan.rotate,
+                x:         `${fan.x}%`,
+                y:         isHov ? fan.y - 28 : fan.y,
+                scale:     1,
+                opacity:   1,
+                boxShadow: isHov
+                  ? "0 22px 55px rgba(0,0,0,0.8), 0 0 20px rgba(0,245,255,0.2)"
+                  : "0 10px 36px rgba(0,0,0,0.65)",
+              } : { rotate: 0, x: 0, y: 40, opacity: 0, scale: 0.88 }}
+              transition={{
+                type:      "spring",
+                stiffness: 220,
+                damping:   26,
+                mass:      0.7,
+                delay:     fanned ? fan.delay : 0,
+                opacity:   { duration: 0.3, delay: fanned ? fan.delay : 0 },
+              }}
+              onHoverStart={() => setHovered(i)}
+              onHoverEnd={() => setHovered(null)}
+              onClick={() => setExpanded(i)}
+            >
+              <img
+                src={img}
+                alt={`${title} – ${getLabel(i)}`}
+                className="w-full h-full object-cover object-top select-none"
+                draggable={false}
+              />
+
+              {/* Scanline texture */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: "repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px)",
+                }}
+              />
+
+              {/* Label chip — fades in on hover */}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 py-2 pointer-events-none"
+                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%)" }}
+                animate={{ opacity: isHov ? 1 : 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                <span className="text-[10px] tracking-[0.25em] uppercase text-white/70">
+                  {getLabel(i)}
+                </span>
+                <span className="text-[10px] tracking-widest text-[var(--accent)]">
+                  {i + 1} / {images.length}
+                </span>
+              </motion.div>
+
+              {/* Cyan top-edge glow on hover */}
+              <motion.div
+                className="absolute inset-x-0 top-0 h-[2px] pointer-events-none"
+                style={{ background: "var(--accent)", boxShadow: "0 0 12px rgba(0,245,255,0.9)" }}
+                animate={{ scaleX: isHov ? 1 : 0, opacity: isHov ? 1 : 0 }}
+                transition={{ duration: 0.22 }}
+              />
+
+              {/* Border */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  border:        isHov ? "1px solid rgba(0,245,255,0.5)" : "1px solid rgba(255,255,255,0.1)",
+                  borderRadius:  "10px",
+                  transition:    "border-color 0.2s",
+                }}
+              />
+            </motion.div>
+          );
+        })}
+
+        {/* Hint */}
+        <motion.p
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.28em] uppercase text-gray-700 pointer-events-none select-none whitespace-nowrap"
+          animate={{ opacity: fanned ? 1 : 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          Hover &amp; click to explore
+        </motion.p>
+      </div>
+
+      {/* ── Fullscreen overlay (portal — escapes transform stacking context) ── */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {expanded !== null && (
+            <motion.div
+              className="fixed inset-0 flex flex-col items-center justify-center p-6 sm:p-10"
+              style={{ zIndex: 9999, backgroundColor: "rgba(0,0,0,0.93)", backdropFilter: "blur(12px)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              onClick={() => setExpanded(null)}
+            >
+              {/* Header label */}
+              <motion.div
+                className="flex items-center gap-3 mb-5"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <span className="text-xs tracking-[0.3em] uppercase text-gray-500">{title}</span>
+                <span className="w-1 h-1 rounded-full" style={{ backgroundColor: "var(--accent)" }} />
+                <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--accent)" }}>
+                  {getLabel(expanded)}
+                </span>
+              </motion.div>
+
+              {/* Image */}
+              <motion.div
+                className="relative"
+                style={{ maxWidth: "86vw", maxHeight: "78vh" }}
+                initial={{ scale: 0.5, opacity: 0, rotate: FAN[expanded]?.rotate ?? 0, y: 30 }}
+                animate={{ scale: 1,   opacity: 1, rotate: 0,                           y: 0  }}
+                exit={{    scale: 0.5, opacity: 0, rotate: FAN[expanded]?.rotate ?? 0, y: 30  }}
+                transition={{ type: "spring", stiffness: 250, damping: 26 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={images[expanded]}
+                  alt={`${title} – ${getLabel(expanded)}`}
+                  style={{
+                    maxHeight:  "78vh",
+                    maxWidth:   "86vw",
+                    display:    "block",
+                    border:     "1px solid rgba(0,245,255,0.25)",
+                    boxShadow:  "0 0 100px rgba(0,245,255,0.06), 0 30px 80px rgba(0,0,0,0.8)",
+                    borderRadius: "10px",
+                  }}
+                />
+
+                {/* Prev */}
+                <motion.button
+                  className="absolute -left-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center border text-gray-400 hover:text-white"
+                  style={{ borderColor: "rgba(255,255,255,0.12)" }}
+                  whileHover={{ borderColor: "rgba(0,245,255,0.5)", color: "var(--accent)", scale: 1.1 }}
+                  onClick={(e) => { e.stopPropagation(); setExpanded((expanded - 1 + images.length) % images.length); }}
+                >‹</motion.button>
+
+                {/* Next */}
+                <motion.button
+                  className="absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center border text-gray-400 hover:text-white"
+                  style={{ borderColor: "rgba(255,255,255,0.12)" }}
+                  whileHover={{ borderColor: "rgba(0,245,255,0.5)", color: "var(--accent)", scale: 1.1 }}
+                  onClick={(e) => { e.stopPropagation(); setExpanded((expanded + 1) % images.length); }}
+                >›</motion.button>
+              </motion.div>
+
+              {/* Dot nav */}
+              <motion.div
+                className="flex gap-2 mt-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ delay: 0.15 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {images.map((_, i) => (
+                  <motion.button
+                    key={i}
+                    onClick={() => setExpanded(i)}
+                    className="rounded-full"
+                    animate={{
+                      width:           i === expanded ? 22 : 6,
+                      backgroundColor: i === expanded ? "var(--accent)" : "rgba(255,255,255,0.18)",
+                      boxShadow:       i === expanded ? "0 0 10px rgba(0,245,255,0.9)" : "none",
+                    }}
+                    style={{ height: 6 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                ))}
+              </motion.div>
+
+              <motion.p
+                className="mt-4 text-[11px] tracking-[0.3em] uppercase text-gray-600"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                Esc or click outside to close
+              </motion.p>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // Individual project slide (full-width, full-height)
 // ─────────────────────────────────────────────────────
 function ProjectSlide({
@@ -292,23 +547,26 @@ function ProjectSlide({
               ref={tiltRef}
               className="relative w-full aspect-[4/3] group"
               style={{
-                rotateX: rotX,
-                rotateY: rotY,
+                rotateX: project.images ? 0 : rotX,
+                rotateY: project.images ? 0 : rotY,
                 transformStyle: "preserve-3d",
+                overflow: "visible",
               }}
-              onMouseMove={onMouseMove}
-              onMouseLeave={onMouseLeave}
-              whileHover={{ scale: 1.02 }}
+              onMouseMove={project.images ? undefined : onMouseMove}
+              onMouseLeave={project.images ? undefined : onMouseLeave}
+              whileHover={project.images ? {} : { scale: 1.02 }}
             >
               {/* Card face */}
               <div
-                className="w-full h-full overflow-hidden relative"
+                className="w-full h-full relative"
                 style={{
-                  backgroundColor: "rgba(0,245,255,0.03)",
-                  border: "1px solid rgba(0,245,255,0.15)",
+                  backgroundColor: project.images ? "transparent" : "rgba(0,245,255,0.03)",
+                  border: project.images ? "none" : "1px solid rgba(0,245,255,0.15)",
                 }}
               >
-                {project.imageUrl ? (
+                {project.images && project.images.length > 0 ? (
+                  <ImageDeck images={project.images} title={project.title} isActive={isActive} labels={project.imageLabels} />
+                ) : project.imageUrl ? (
                   <>
                     <img
                       src={project.imageUrl}
