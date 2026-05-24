@@ -2,6 +2,10 @@
 
 import { useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { featuredProjects } from "@/components/sections/Projects";
+
+const N             = featuredProjects.length;
+const CONTACT_INDEX = 3 + N + 2; // mirrors page.tsx layout
 
 const stats = [
   { value: "2.5+", label: "Years Experience" },
@@ -152,6 +156,7 @@ export default function About() {
         >
           <motion.a
             href="#contact"
+            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: CONTACT_INDEX * window.innerHeight, behavior: "smooth" }); }}
             className="relative inline-flex items-center px-8 py-3.5 text-sm font-medium tracking-widest uppercase overflow-hidden group"
             style={{ border: "1px solid var(--accent)", color: "var(--accent)" }}
             whileHover={{ scale: 1.03 }}
@@ -171,6 +176,7 @@ export default function About() {
 
           <motion.a
             href="#projects"
+            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 2 * window.innerHeight, behavior: "smooth" }); }}
             className="flex items-center gap-2 text-sm tracking-widest uppercase text-gray-500 hover:text-white transition-colors"
             whileHover={{ x: 5 }}
           >
