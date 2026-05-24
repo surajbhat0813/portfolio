@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 
 // Circuit path definitions – sharp right-angle turns like PCB traces
 const CIRCUIT_1 = "M -50,750 L 200,750 L 200,500 L 500,500 L 500,300 L 850,300 L 850,550 L 1200,550 L 1200,350 L 1600,350 L 1600,200 L 1970,200";
@@ -9,19 +9,23 @@ const CIRCUIT_2 = "M 1970,880 L 1700,880 L 1700,650 L 1400,650 L 1400,450 L 1050
 const CIRCUIT_3 = "M 500,1090 L 500,800 L 800,800 L 800,600 L 1100,600 L 1100,400 L 1400,400 L 1400,180";
 const CIRCUIT_4 = "M 1200,1090 L 1200,900 L 900,900 L 900,700 L 600,700 L 600,450 L 300,450 L 300,-10";
 
+function generateParticles() {
+  return Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    duration: 3 + Math.random() * 5,
+    delay: Math.random() * 6,
+    isCyan: i % 3 === 0,
+  }));
+}
+
 export default function BackgroundPattern() {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 30 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        duration: 3 + Math.random() * 5,
-        delay: Math.random() * 6,
-        isCyan: i % 3 === 0,
-      })),
-    []
-  );
+  const [particles, setParticles] = useState<ReturnType<typeof generateParticles>>([]);
+
+  useEffect(() => {
+    setParticles(generateParticles());
+  }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

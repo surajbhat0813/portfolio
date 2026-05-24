@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ScrollReveal from "../animations/ScrollReveal";
 import { motion } from "framer-motion";
-import { Mail, Send, CheckCircle, AlertCircle } from "lucide-react";
+import { Mail, Send, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -96,6 +96,52 @@ export default function Contact() {
                   bhatsuraj22@gmail.com
                 </a>
               </div>
+
+              {/* LinkedIn card */}
+              <motion.a
+                href="https://in.linkedin.com/in/suraj-bhat-792299268"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center gap-5 p-5 border border-gray-800 hover:border-[var(--accent)] transition-colors duration-300 overflow-hidden"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                {/* Scan line on hover */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: "linear-gradient(90deg, transparent, rgba(0,245,255,0.04), transparent)",
+                  }}
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.6 }}
+                />
+
+                {/* LinkedIn "L" mark */}
+                <div
+                  className="flex-shrink-0 w-12 h-12 flex items-center justify-center text-xl font-bold"
+                  style={{
+                    border: "1px solid var(--accent)",
+                    color: "var(--accent)",
+                    boxShadow: "0 0 12px rgba(0,245,255,0.15) inset",
+                  }}
+                >
+                  in
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-semibold text-base leading-tight">Suraj Bhat</p>
+                  <p className="text-gray-500 text-xs tracking-widest uppercase mt-0.5">Frontend Developer</p>
+                  <p
+                    className="text-xs mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    View LinkedIn Profile
+                  </p>
+                </div>
+
+                <ExternalLink size={16} className="text-gray-700 group-hover:text-[var(--accent)] transition-colors flex-shrink-0" />
+              </motion.a>
             </div>
           </ScrollReveal>
 
